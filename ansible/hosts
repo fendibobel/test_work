@@ -1,0 +1,6 @@
+[haproxy]
+rmq-0 ansible_host=46.161.52.50 ansible_user=root
+[rabbitmq]
+rmq-1 ansible_host=46.161.52.106 ansible_user=root
+rmq-2 ansible_host=46.148.238.204 ansible_user=root
+rmq-3 ansible_host=46.148.238.114 ansible_user=root

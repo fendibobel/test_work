@@ -1,0 +1,51 @@
+- name: copy resolv.conf
+  copy: src=etc/resolv.conf dest=/etc/resolv.conf owner=root group=root mode=0644
+
+- name: copy /etc/hosts
+  template: src=etc/hosts dest=/etc/hosts owner=root group=root mode=0644
+  tags: hosts
+
+- name: copy config repo rabbitmq
+  copy: src=yum.repos.d/rabbitmq_rabbitmq-server.repo dest=/etc/yum.repos.d/rabbitmq_rabbitmq-server.repo owner=root group=root mode=0644
+
+- name: copy config repo erlang
+  copy: src=yum.repos.d/erlang_solutions.repo dest=/etc/yum.repos.d/erlang_solutions.repo owner=root group=root mode=0644
+
+- name: install packages
+  yum: 
+      name:
+        - firewalld
+        - epel-release
+        - erlang
+        - rabbitmq-server
+      state: present
+
+- service: name=firewalld enabled=yes state=started
+
+- name: open port rabbitmq
+  firewalld:
+      port: '{{ item }}'
+      permanent: true
+      state: enabled
+  with_items:
+      - 5672/tcp
+      - 4369/tcp
+      - 25672/tcp
+  tags: firewalld 
+
+- service: name=firewalld enabled=yes state=restarted
+
+- name: copy .erlang.cookie
+  copy: src=var/lib/rabbitmq/.erlang.cookie dest=/var/lib/rabbitmq/.erlang.cookie owner=rabbitmq group=rabbitmq mode=0600
+
+- name: copy /etc/rabbitmq/enabled_plugins
+  copy: src=etc/rabbitmq/enabled_plugins dest=/etc/rabbitmq/enabled_plugins owner=rabbitmq group=rabbitmq mode=0600
+
+- name: template /etc/rabbitmq/rabbitmq.conf
+  template: src=etc/rabbitmq/rabbitmq.conf dest=/etc/rabbitmq/rabbitmq.conf owner=rabbitmq group=rabbitmq mode=0600
+  tags: conf
+
+- name: template /etc/rabbitmq/rabbitmq_definitions.json
+  template: src=etc/rabbitmq/rabbitmq_definitions.json dest=/etc/rabbitmq/rabbitmq_definitions.json owner=rabbitmq group=rabbitmq mode=0600
+
+- service: name=rabbitmq-server enabled=yes state=restarted

@@ -1,0 +1,6 @@
+{% set count = namespace(a=0) %}
+{% for items in rmq_local_ip %}
+{{ items }} rmq-{{ count.a}}
+{% set count.a = count.a + 1 %}
+{% endfor %}
+

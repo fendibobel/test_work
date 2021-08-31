@@ -1,0 +1,37 @@
+- name: copy resolv.conf
+  copy: src=etc/resolv.conf dest=/etc/resolv.conf owner=root group=root mode=0644
+
+- name: copy /etc/hosts
+  template: src=etc/hosts dest=/etc/hosts owner=root group=root mode=0644
+  tags: hosts
+
+
+- name: install packages
+  yum:
+     name:
+       - firewalld
+       - haproxy
+     state: present
+
+- command: setsebool -P haproxy_connect_any on
+
+- service: name=firewalld enabled=yes state=started
+
+- name: open port rabbitmq
+  firewalld:
+     port: '{{ item }}'
+     permanent: true
+     state: enabled
+  with_items:
+     - 5672/tcp
+  tags: firewalld
+
+- service: name=firewalld enabled=yes state=restarted
+
+- name: copy /etc/haproxy/haproxy.cfg
+  template: src=etc/haproxy/haproxy.cfg dest=/etc/haproxy/haproxy.cfg owner=root group=root mode=0644
+  tags: haproxy
+
+- service: name=haproxy enabled=yes state=restarted
+
+

@@ -1,0 +1,9 @@
+- hosts: all
+  gather_facts: yes
+  tasks:
+    - debug: var=ansible_nodename verbosity=0
+
+- name: configuration to haproxy
+  hosts: haproxy
+  roles:
+    -  haproxy

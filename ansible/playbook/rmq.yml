@@ -1,0 +1,5 @@
+- name: configuration to rmq nodes
+
+  hosts: rabbitmq
+  roles:
+    -  rmq

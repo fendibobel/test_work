@@ -1,0 +1,26 @@
+{
+  "users":[
+        {
+	    "name": "test",
+	    "password_hash": "HkUpyxb0sSLwpXz2bM77DcwhTdsaxa/92jvAdzyKU/GjfQti",
+	    "hashing_algorithm": "rabbit_password_hashing_sha256",
+	    "tags": "manager",
+	}
+  ],
+  "vhosts":[
+        {"name":"/"},
+        {"name":"test"}
+  ],
+  "policies":[
+        {"vhost":"/","name":"ha","pattern":"", "definition":{"ha-mode":"all","ha-sync-mode":"automatic","ha-sync-batch-size":5}}
+  ],
+  "permissions": [
+        {
+         "user": "test",
+         "vhost": "test",
+         "configure": ".*",
+         "write": ".*",
+         "read": ".*"
+        }
+  ]
+}
